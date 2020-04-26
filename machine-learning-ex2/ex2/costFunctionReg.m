@@ -23,7 +23,7 @@ z = X * theta;
 h = sigmoid(z);
 
 J = 1 / m * sum( -y' * log(h) - (1 - y)' * log(1 - h) ) ...
-    + lambda / (2*m) * sum( theta(2:n).^2 );
+    + lambda / (2*m) * sum( theta(2:n).^2 ); % NOTE: DOES NOT INCLUDE '''theta(1)'''
     
     
 grad(1) = 1 / m * sum( (h - y)' * X(:,1) );
