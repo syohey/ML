@@ -62,17 +62,46 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% step 1...?
+a1 = [ones(m,1) X];
+z2 = a1 * Theta1';
+a2 = sigmoid(z2);
+z3 = [ones(m,1) a2] * Theta2';
+h = sigmoid(z3); % also a3 but the last layer so it becomes h ;)
+
+% reshape y to KxM = 10x5000 matrix
+Y = zeros(num_labels, m);
+for i = 1:m,
+  Y(y(i),i) = 1;
+endfor
+
+% calculate cost
+c = 1/m; % constant multiplier
+temp = 0; % temporary storage variabe for J
+for i = 1:m,
+  temp = temp + sum( -Y(:,i)' * log(h(i,:)') - (1 - Y(:,i)') * log(1 - h(i,:)') );
+endfor
+
+J = c * temp;
+fprintf('without regularization: %f', J);
+
+% regularize the cost function
+##theta1_n = size(Theta1,2);
+##theta2_n = size(Theta2,2);
+
+J = J + lambda/(2*m) * ...
+    ( ...
+    sum( sum(Theta1(:,2:end).^2) ) ...
+    + sum( sum(Theta2(:,2:end).^2) ) ...
+    );
 
 
-
-
-
-
-
-
-
-
-
+% backpropagation
+% step 2
+d3 = zeros(m,num_labels);
+for t = 1:m,
+  d3 = h(t,:) - Y(t,:);
+endfor
 
 
 
