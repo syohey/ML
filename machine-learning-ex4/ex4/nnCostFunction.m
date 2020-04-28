@@ -62,28 +62,31 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-% step 1...?
-a1 = [ones(m,1) X];
-z2 = a1 * Theta1';
-a2 = sigmoid(z2);
-z3 = [ones(m,1) a2] * Theta2';
-h = sigmoid(z3); % also a3 but the last layer so it becomes h ;)
-
 % reshape y to KxM = 10x5000 matrix
 Y = zeros(num_labels, m);
 for i = 1:m,
   Y(y(i),i) = 1;
 endfor
 
+
+% PART 1
+a_1 = [ones(m,1) X];
+z_2 = a_1 * Theta1';
+a_2 = sigmoid(z_2);
+z_3 = [ones(m,1) a_2] * Theta2';
+h = sigmoid(z_3); % also a_3 but the last layer so it becomes h ;)
+
+
 % calculate cost
 c = 1/m; % constant multiplier
 temp = 0; % temporary storage variabe for J
 for i = 1:m,
-  temp = temp + sum( -Y(:,i)' * log(h(i,:)') - (1 - Y(:,i)') * log(1 - h(i,:)') );
+  temp = temp ...
+         + sum( -Y(:,i)' * log(h(i,:)') ...
+         - (1-Y(:,i)') * log(1-h(i,:)') );
 endfor
 
 J = c * temp;
-fprintf('without regularization: %f', J);
 
 % regularize the cost function
 ##theta1_n = size(Theta1,2);
@@ -91,21 +94,84 @@ fprintf('without regularization: %f', J);
 
 J = J + lambda/(2*m) * ...
     ( ...
-    sum( sum(Theta1(:,2:end).^2) ) ...
-    + sum( sum(Theta2(:,2:end).^2) ) ...
+        sum( sum(Theta1(:,2:end).^2) ) ...
+      + sum( sum(Theta2(:,2:end).^2) ) ...
     );
 
+  
 
-% backpropagation
-% step 2
-d3 = zeros(m,num_labels);
+
+% BACKPROPAGATION  
+##X_t = X'; % transpose X = 400x5000
+##D_1 = zeros(25,401);
+##D_2 = zeros(10,26);
+##for t = 1:m,
+##  % step 1
+##  a_1 = [1 ; X_t(:,t)]; % 401x1
+##  z_2 = Theta1 * a_1; % 25x401 * 401x1 = 25x1
+##  a_2 = sigmoid(z_2); % 25x1
+##  z_3 = Theta2 * [1; a_2]; % 10x26 * 26x1 = 10x1
+##  a_3 = sigmoid(z_3); % 10x1
+##  
+##  % step 2
+##  delta_3 = a_3 - Y(:,t); % 10x1
+##  
+##  % step 3
+##  % (10x25)' * 10x1 = 25x1 .* 25x1 = 25x1
+##  delta_2 = Theta2(:,2:end)' * delta_3 .* sigmoidGradient(z_2);
+##  
+##  % step 4
+##  D_1 = D_1 + delta_2 * a_1'; % 25x401 + 25x1 * 1x401 = 25x401
+##  D_2 = D_2 + delta_3 * [1 ; a_2]'; % 10x26 + 10x1 * 1x26 = 10x26
+##  
+##endfor
+##
+##Theta1_grad = 1/m * D_1;
+##Theta2_grad = 1/m * D_2;
+
+
+% PART 2
+% backpropagation attempt 2
+X_t = X'; % 5000x400 -> 400x5000 --- trnspose X
+D_1 = zeros(size(Theta1));
+D_2 = zeros(size(Theta2));
 for t = 1:m,
-  d3 = h(t,:) - Y(t,:);
+  % step 1
+  a_1 = [1 ; X_t(:,t)]; % 401x1
+  z_2 = Theta1 * a_1; % 25x401 * 401x1 = 25x1
+  temp = sigmoid(z_2); % 25x1
+  a_2 = [1 ; temp]; % 26x1
+  z_3 = Theta2 * a_2; % 10x26 * 26x1 = 10x1
+  a_3 = sigmoid(z_3); % 10x1
+ 
+  
+  % step 2 -- not sure if i did it correctly
+  delta_3 = a_3 - Y(:,t); % 10x1
+
+  % step 3 --- ???
+  % 26x10 * 10x1 .* 25x1 = 25x1
+  delta_2 = Theta2(:,2:end)' * delta_3 .* sigmoidGradient(z_2);
+  
+  % step 4
+  % 25x401 = 25x401 + 25x1 * 1x401
+  D_1 = D_1 + delta_2 * a_1';
+  % 10x26 = 10x26 + 10x1 * 10x26
+  D_2 = D_2 + delta_3 * a_2';  
+  
 endfor
 
+Theta1_grad = 1/m * D_1; % 25x401
+Theta2_grad = 1/m * D_2; % 10x26
 
 
 
+
+% PART 3
+reg_1 = Theta1_grad(:,2:end) + lambda/m * Theta1(:,2:end); % 25x400
+reg_2 = Theta2_grad(:,2:end) + lambda/m * Theta2(:,2:end); % 10x25
+
+Theta1_grad = [Theta1_grad(:,1) reg_1];
+Theta2_grad = [Theta2_grad(:,1) reg_2];
 
 
 
