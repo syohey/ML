@@ -133,10 +133,10 @@ J = J + lambda/(2*m) * ...
 % PART 2
 % backpropagation attempt 2
 X_t = X'; % 5000x400 -> 400x5000 --- trnspose X
-D_1 = zeros(size(Theta1));
-D_2 = zeros(size(Theta2));
+D_1 = zeros(size(Theta1)); % 25x401
+D_2 = zeros(size(Theta2)); % 10x26
 for t = 1:m,
-  % step 1
+  % step 1 --- FP
   a_1 = [1 ; X_t(:,t)]; % 401x1
   z_2 = Theta1 * a_1; % 25x401 * 401x1 = 25x1
   temp = sigmoid(z_2); % 25x1
