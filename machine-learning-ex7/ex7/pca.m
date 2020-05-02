@@ -21,8 +21,8 @@ S = zeros(n);
 %
 
 
-
-
+Sigma = 1/m * X' * X; % 2x300 * 300x2 = 2x2
+[U, S, V] = svd(Sigma);
 
 
 

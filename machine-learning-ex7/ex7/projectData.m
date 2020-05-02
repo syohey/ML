@@ -18,6 +18,16 @@ Z = zeros(size(X, 1), K);
 %                    projection_k = x' * U(:, k);
 %
 
+m = size(X,1);
+
+
+U_reduce = U(:,1:K); % 2x1 .. 2x2
+for i = 1:m,
+  x = X(i,:)'; % 2x1 .. 2x2 .. 2x3 ..
+  Z(i,1:K) = x' * U_reduce; % 1x2 * 2x1 = 1, 1x2 * 2x2 = 1x2, 3x2 * 2x1 = 3x1
+endfor
+
+
 
 
 
