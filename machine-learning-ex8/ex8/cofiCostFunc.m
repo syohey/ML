@@ -14,8 +14,8 @@ Theta = reshape(params(num_movies*num_features+1:end), ...
             
 % You need to return the following values correctly
 J = 0;
-X_grad = zeros(size(X));
-Theta_grad = zeros(size(Theta)); %%% 
+X_grad = zeros(size(X)); %%% 5x3
+Theta_grad = zeros(size(Theta)); %%% 4x3
 
 % ====================== YOUR CODE HERE ======================
 % Instructions: Compute the cost function and gradient for collaborative
@@ -40,17 +40,60 @@ Theta_grad = zeros(size(Theta)); %%%
 %                     partial derivatives w.r.t. to each element of Theta
 %
 
+R1 = X*Theta'; %%% 5x3 * 3x4 = 5x4
 
-J = 1/2 * sum(  );
-
-
-
+##J = 1/2 * sum( (R1(R==1) - Y(R==1)).^2 );
 
 
+J = 1/2 * sum( (R1(R==1) - Y(R==1)).^2 ) + ...
+    lambda/2 * sum( sum( Theta.^2 ) ) + ...
+    lambda/2 * sum( sum( X.^2 ) );
+
+
+
+##diff = R1(R==1) - Y(R==1);
+
+
+##for i = 1:num_movies,
+##  for j = 1:num_features, 
+##    if R(i,j) == 1,
+##      temp_r1 = X(i,:) * Theta(j,:)'; % 1x3 * 3x1 = scalar
+##      diff = temp_r1 - Y(i,j); % diff -> scalar
+##      X_grad(i,:) = diff * Theta(j,:)'; % -> scalar * 3x1 = 3x1
+##      Theta_grad(j,:) = diff * X(i,:)'; % -> scalar * 3x1 = 3x1
+##    endif
+##  endfor
+##endfor
+##
+
+
+
+##for i = 1:num_movies,
+##  r1 = X(i,:)*Theta'; % 1x3 * 3x4 = 1x4
+##  diff = (r1.*R(i,:) - Y(i,:).*R(i,:)); % 1x4
+##  X_grad(i,:) = diff * Theta; % 1x4 * 4x3 = 1x3
+##endfor
+##
+##for j = 1:num_users,
+##  r1 = X*Theta(j,:)'; % 5x3 * 3x1 = 5x1
+##  diff = (r1.*R(:,j) - Y(:,j).*R(:,j)); % 5x1 .* 5x1 ... -> 5x1
+##  Theta_grad(j,:) = diff' * X; % 1x5 * 5x3 = 1x3
+##endfor
 
 
 
 
+for i = 1:num_movies,
+  r1 = X(i,:)*Theta'; % 1x3 * 3x4 = 1x4
+  diff = (r1.*R(i,:) - Y(i,:).*R(i,:)); % 1x4
+  X_grad(i,:) = diff * Theta + lambda*X(i,:); % 1x4 * 4x3 = 1x3
+endfor
+
+for j = 1:num_users,
+  r1 = X*Theta(j,:)'; % 5x3 * 3x1 = 5x1
+  diff = (r1.*R(:,j) - Y(:,j).*R(:,j)); % 5x1 .* 5x1 ... -> 5x1
+  Theta_grad(j,:) = diff' * X + lambda*Theta(j,:); % 1x5 * 5x3 = 1x3
+endfor
 
 
 
