@@ -51,20 +51,7 @@ J = 1/2 * sum( (R1(R==1) - Y(R==1)).^2 ) + ...
 
 
 
-##diff = R1(R==1) - Y(R==1);
 
-
-##for i = 1:num_movies,
-##  for j = 1:num_features, 
-##    if R(i,j) == 1,
-##      temp_r1 = X(i,:) * Theta(j,:)'; % 1x3 * 3x1 = scalar
-##      diff = temp_r1 - Y(i,j); % diff -> scalar
-##      X_grad(i,:) = diff * Theta(j,:)'; % -> scalar * 3x1 = 3x1
-##      Theta_grad(j,:) = diff * X(i,:)'; % -> scalar * 3x1 = 3x1
-##    endif
-##  endfor
-##endfor
-##
 
 
 
