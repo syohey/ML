@@ -1,4 +1,12 @@
 *.ipynb
 .ipynb_checkpoints/
-token.mat
-submit.m
+
+
+
+*/*/token.mat
+
+
+
+*/*/submit.m
+
+*.pdf
